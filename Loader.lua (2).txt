@@ -1,0 +1,200 @@
+--[[
+  _________                          .__  .__   
+ /   _____/__.__. ______ ____ _____  |  | |  |  
+ \_____  <   |  |/  ___// ___\\__  \ |  | |  |  
+ /        \___  |\___ \\  \___ / __ \|  |_|  |__
+/_______  / ____/____  >\___  >____  /____/____/
+        \/\/         \/     \/     \/           
+        
+        Version: v1.0.2
+        Author: EnzukaiX
+        discord: https://dsc.gg/syscallx
+  ________               _____                            __                
+ /  _____/  ____   _____/ ____\__.__. ______ ____ _____ _/  |_  ___________ 
+/   \  ___ /  _ \ /  _ \   __<   |  |/  ___// ___\\__  \\   __\/  _ \_  __ \
+\    \_\  (  <_> |  <_> )  |  \___  |\___ \\  \___ / __ \|  | (  <_> )  | \/
+ \______  /\____/ \____/|__|  / ____/____  >\___  >____  /__|  \____/|__|   
+        \/                    \/         \/     \/     \/                           
+           Author: 1xayd1
+           Discord: https://discord.gg/wAzBtmU7Mb
+]]           
+
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/NIcoGabrielRealYtr/lds13-Library/refs/heads/main/Source"))()
+local Players = game:GetService("Players")
+
+local LocalPlayer = Players.LocalPlayer
+local GameListURL = "https://syscall-gamelist.lovable.app/API/gamelist.lua"
+local FetchedData = {}
+
+local Window = Library:Window({
+    Name = "Syscall Loader",
+    SubTitle = "v1.0",
+    TimeRemaining = 500000
+})
+
+local HomePage = Window:Page({
+    Icon = "131145598162617",
+    Columns = 2
+})
+
+local LoaderPage = Window:Page({
+    Icon = "131145598162617",
+    Columns = 2
+})
+
+local InfoSection = HomePage:Section({
+    Name = "Info",
+    Icon = "131145598162617",
+    Side = 1
+})
+
+local CreditsSection = HomePage:Section({
+    Name = "Credits",
+    Icon = "131145598162617",
+    Side = 2
+})
+
+InfoSection:Label("Loader Version: 1.0")
+InfoSection:Label("Username: " .. LocalPlayer.Name)
+InfoSection:Label("Time: " .. os.date("%X"))
+
+CreditsSection:Label("Owner: VulnX")
+CreditsSection:Label("Developers: EnzukaiX (xltge, vulnx, xyra)")
+CreditsSection:Label("UI library creators: Rayfield, Wind UI, obsidian/linoria")
+
+local LeftSection = LoaderPage:Section({
+    Name = "Configuration",
+    Icon = "131145598162617",
+    Side = 1
+})
+
+local RightSection = LoaderPage:Section({
+    Name = "Execution",
+    Icon = "131145598162617",
+    Side = 2
+})
+
+local GameDropdown = nil
+local ScriptDropdown = nil
+local CurrentScripts = {}
+
+local function RebuildGameDropdown(ItemsList)
+    ItemsList = ItemsList or {}
+    if GameDropdown then
+        GameDropdown:Refresh(ItemsList)
+    else
+        GameDropdown = LeftSection:Dropdown({
+            Name = "Select Game",
+            Flag = "SelectedGame",
+            Items = ItemsList,
+            Default = ItemsList[1] or "",
+            MaxSize = 145,
+            Callback = function(Value)
+                RebuildScriptDropdown({})
+            end
+        })
+    end
+end
+
+local function RebuildScriptDropdown(ItemsList)
+    ItemsList = ItemsList or {}
+    if ScriptDropdown then
+        ScriptDropdown:Refresh(ItemsList)
+    else
+        ScriptDropdown = RightSection:Dropdown({
+            Name = "Select Script",
+            Flag = "SelectedScript",
+            Items = ItemsList,
+            Default = ItemsList[1] or "",
+            MaxSize = 145,
+            Callback = function(Value) end
+        })
+    end
+end
+
+local function FetchGames()
+    local Success, Result = pcall(function()
+        return loadstring(game:HttpGet(GameListURL))()
+    end)
+    
+    if Success and type(Result) == "table" then
+        FetchedData = Result
+        local GameNames = {}
+        for GameName, _ in pairs(FetchedData) do
+            table.insert(GameNames, GameName)
+        end
+        table.sort(GameNames)
+        
+        RebuildGameDropdown(GameNames)
+        Library:Notification("Games fetched successfully.", "90449909165261", 3)
+    else
+        Library:Notification("Failed to fetch games.", "90449909165261", 5)
+    end
+end
+
+LeftSection:Button({
+    Name = "Refresh Games",
+    Callback = function()
+        FetchGames()
+    end
+})
+
+LeftSection:Button({
+    Name = "Check Support",
+    Callback = function()
+        local SelectedGame = Library.Flags["SelectedGame"]
+        if SelectedGame and FetchedData[SelectedGame] then
+            CurrentScripts = FetchedData[SelectedGame]
+            local ScriptNames = {}
+            for _, ScriptData in ipairs(CurrentScripts) do
+                if ScriptData.name then
+                    table.insert(ScriptNames, ScriptData.name)
+                end
+            end
+            table.sort(ScriptNames)
+            
+            RebuildScriptDropdown(ScriptNames)
+            Library:Notification("Scripts fetched for " .. SelectedGame .. ".", "90449909165261", 3)
+        else
+            Library:Notification("No scripts found for this game.", "90449909165261", 3)
+        end
+    end
+})
+
+RightSection:Button({
+    Name = "Load Script",
+    Callback = function()
+        local SelectedGame = Library.Flags["SelectedGame"]
+        local SelectedScriptName = Library.Flags["SelectedScript"]
+        
+        if SelectedGame and SelectedScriptName and CurrentScripts then
+            for _, ScriptData in ipairs(CurrentScripts) do
+                if ScriptData.name == SelectedScriptName and ScriptData.url then
+                    local Success, ErrorMessage = pcall(function()
+                        loadstring(game:HttpGet(ScriptData.url))()
+                    end)
+                    
+                    if Success then
+                        Library:Notification("Script loaded successfully.", "90449909165261", 3)
+                    else
+                        Library:Notification("Execution error: " .. tostring(ErrorMessage), "90449909165261", 5)
+                    end
+                    return
+                end
+            end
+        end
+        Library:Notification("Please select a valid game and script.", "90449909165261", 3)
+    end
+})
+
+RightSection:Button({
+    Name = "Unload Loader",
+    Callback = function()
+        Library:Unload()
+    end
+})
+
+RebuildGameDropdown({})
+RebuildScriptDropdown({})
+FetchGames()
