@@ -141,7 +141,7 @@ LeftSection:Button({
 })
 
 LeftSection:Button({
-    Name = "Check Support",
+    Name = "Fetch Scripts for selected",
     Callback = function()
         local SelectedGame = Library.Flags["SelectedGame"]
         if SelectedGame and FetchedData[SelectedGame] then
