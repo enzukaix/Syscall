@@ -7,7 +7,7 @@
         \/\/         \/     \/     \/           
         
         Version: v1.0.2
-        Author: EnzukaiX
+        Author: EnzukaiX team
         discord: https://dsc.gg/syscallx
   ________               _____                            __                
  /  _____/  ____   _____/ ____\__.__. ______ ____ _____ _/  |_  ___________ 
