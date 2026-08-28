@@ -6,7 +6,7 @@
 /_______  / ____/____  >\___  >____  /____/____/
         \/\/         \/     \/     \/           
         
-        Version: v1.0.2
+        Version: v1.1.2
         Author: EnzukaiX team
         discord: https://dsc.gg/syscallx
   ________               _____                            __                
@@ -19,182 +19,393 @@
            Discord: https://discord.gg/wAzBtmU7Mb
 ]]           
 
-
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/NIcoGabrielRealYtr/lds13-Library/refs/heads/main/Source"))()
+local CoreGui = game:GetService("CoreGui")
+local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
-
+local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
+
+for _, child in ipairs(CoreGui:GetChildren()) do
+    if child.Name:sub(1, 11) == "SYS-LOADER_" then
+        child:Destroy()
+    end
+end
+
+local function GenerateRandomId()
+    local id = ""
+    for i = 1, 10 do
+        id = id .. tostring(math.random(0, 9))
+    end
+    return id
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "SYS-LOADER_" .. GenerateRandomId()
+ScreenGui.ResetOnSpawn = false
+ScreenGui.DisplayOrder = 999
+ScreenGui.Parent = CoreGui
+
+local ToggleIcon = Instance.new("TextButton")
+ToggleIcon.Name = "ToggleIcon"
+ToggleIcon.Size = UDim2.new(0, 36, 0, 36)
+ToggleIcon.Position = UDim2.new(0.05, 0, 0.2, 0)
+ToggleIcon.BackgroundColor3 = Color3.fromRGB(20, 22, 25)
+ToggleIcon.BorderSizePixel = 0
+ToggleIcon.Text = "S"
+ToggleIcon.TextColor3 = Color3.fromRGB(242, 133, 0)
+ToggleIcon.TextSize = 18
+ToggleIcon.Font = Enum.Font.Code
+ToggleIcon.Active = true
+ToggleIcon.Draggable = true
+ToggleIcon.Parent = ScreenGui
+
+local ToggleStroke = Instance.new("UIStroke")
+ToggleStroke.Color = Color3.fromRGB(50, 55, 65)
+ToggleStroke.Thickness = 1.5
+ToggleStroke.Parent = ToggleIcon
+
+local ToggleCorner = Instance.new("UICorner")
+ToggleCorner.CornerRadius = UDim.new(0, 6)
+ToggleCorner.Parent = ToggleIcon
+
+local Main = Instance.new("Frame")
+Main.Name = "Main"
+Main.Size = UDim2.new(0, 460, 0, 310)
+Main.Position = UDim2.new(0.5, -230, 0.5, -155)
+Main.BackgroundColor3 = Color3.fromRGB(20, 22, 25)
+Main.BorderSizePixel = 0
+Main.ClipsDescendants = true
+Main.Active = true
+Main.Draggable = true
+Main.Parent = ScreenGui
+
+local OuterBorder = Instance.new("UIStroke")
+OuterBorder.Color = Color3.fromRGB(50, 55, 65)
+OuterBorder.Thickness = 1.5
+OuterBorder.Parent = Main
+
+local AccentBar = Instance.new("Frame")
+AccentBar.Name = "AccentBar"
+AccentBar.Size = UDim2.new(1, 0, 0, 2)
+AccentBar.Position = UDim2.new(0, 0, 0, 0)
+AccentBar.BackgroundColor3 = Color3.fromRGB(242, 133, 0)
+AccentBar.BorderSizePixel = 0
+AccentBar.Parent = Main
+
+local TitleBar = Instance.new("Frame")
+TitleBar.Name = "TitleBar"
+TitleBar.Size = UDim2.new(1, 0, 0, 28)
+TitleBar.Position = UDim2.new(0, 0, 0, 2)
+TitleBar.BackgroundColor3 = Color3.fromRGB(15, 17, 20)
+TitleBar.BorderSizePixel = 0
+TitleBar.Parent = Main
+
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Size = UDim2.new(1, -12, 1, 0)
+TitleLabel.Position = UDim2.new(0, 10, 0, 0)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "Syscall Loader"
+TitleLabel.TextColor3 = Color3.fromRGB(200, 205, 215)
+TitleLabel.TextSize = 12
+TitleLabel.Font = Enum.Font.Code
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+TitleLabel.Parent = TitleBar
+
+local iconDragStart, iconWasDragged
+ToggleIcon.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        iconDragStart = input.Position
+        iconWasDragged = false
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement and iconDragStart then
+        if (input.Position - iconDragStart).Magnitude > 5 then
+            iconWasDragged = true
+        end
+    end
+end)
+
+ToggleIcon.MouseButton1Click:Connect(function()
+    if not iconWasDragged then
+        Main.Visible = not Main.Visible
+    end
+end)
+
+local Content = Instance.new("Frame")
+Content.Name = "Content"
+Content.Size = UDim2.new(1, -20, 1, -78)
+Content.Position = UDim2.new(0, 10, 0, 36)
+Content.BackgroundTransparency = 1
+Content.Parent = Main
+
+local GamesFrame = Instance.new("Frame")
+GamesFrame.Name = "GamesFrame"
+GamesFrame.Size = UDim2.new(0.5, -5, 1, 0)
+GamesFrame.BackgroundColor3 = Color3.fromRGB(15, 16, 19)
+GamesFrame.BorderSizePixel = 0
+GamesFrame.Parent = Content
+
+local GamesStroke = Instance.new("UIStroke")
+GamesStroke.Color = Color3.fromRGB(35, 38, 45)
+GamesStroke.Thickness = 1
+GamesStroke.Parent = GamesFrame
+
+local GamesHeader = Instance.new("TextLabel")
+GamesHeader.Size = UDim2.new(1, 0, 0, 22)
+GamesHeader.BackgroundColor3 = Color3.fromRGB(25, 27, 32)
+GamesHeader.BorderSizePixel = 0
+GamesHeader.Text = "  Games"
+GamesHeader.TextColor3 = Color3.fromRGB(242, 133, 0)
+GamesHeader.TextSize = 11
+GamesHeader.Font = Enum.Font.Code
+GamesHeader.TextXAlignment = Enum.TextXAlignment.Left
+GamesHeader.Parent = GamesFrame
+
+local GamesScroll = Instance.new("ScrollingFrame")
+GamesScroll.Size = UDim2.new(1, -6, 1, -26)
+GamesScroll.Position = UDim2.new(0, 3, 0, 24)
+GamesScroll.BackgroundTransparency = 1
+GamesScroll.BorderSizePixel = 0
+GamesScroll.ScrollBarThickness = 3
+GamesScroll.ScrollBarImageColor3 = Color3.fromRGB(242, 133, 0)
+GamesScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+GamesScroll.Parent = GamesFrame
+
+local GamesLayout = Instance.new("UIListLayout")
+GamesLayout.SortOrder = Enum.SortOrder.LayoutOrder
+GamesLayout.Padding = UDim.new(0, 2)
+GamesLayout.Parent = GamesScroll
+
+local ScriptsFrame = Instance.new("Frame")
+ScriptsFrame.Name = "ScriptsFrame"
+ScriptsFrame.Size = UDim2.new(0.5, -5, 1, 0)
+ScriptsFrame.Position = UDim2.new(0.5, 5, 0, 0)
+ScriptsFrame.BackgroundColor3 = Color3.fromRGB(15, 16, 19)
+ScriptsFrame.BorderSizePixel = 0
+ScriptsFrame.Parent = Content
+
+local ScriptsStroke = Instance.new("UIStroke")
+ScriptsStroke.Color = Color3.fromRGB(35, 38, 45)
+ScriptsStroke.Thickness = 1
+ScriptsStroke.Parent = ScriptsFrame
+
+local ScriptsHeader = Instance.new("TextLabel")
+ScriptsHeader.Size = UDim2.new(1, 0, 0, 22)
+ScriptsHeader.BackgroundColor3 = Color3.fromRGB(25, 27, 32)
+ScriptsHeader.BorderSizePixel = 0
+ScriptsHeader.Text = "  Scripts"
+ScriptsHeader.TextColor3 = Color3.fromRGB(242, 133, 0)
+ScriptsHeader.TextSize = 11
+ScriptsHeader.Font = Enum.Font.Code
+ScriptsHeader.TextXAlignment = Enum.TextXAlignment.Left
+ScriptsHeader.Parent = ScriptsFrame
+
+local ScriptsScroll = Instance.new("ScrollingFrame")
+ScriptsScroll.Size = UDim2.new(1, -6, 1, -26)
+ScriptsScroll.Position = UDim2.new(0, 3, 0, 24)
+ScriptsScroll.BackgroundTransparency = 1
+ScriptsScroll.BorderSizePixel = 0
+ScriptsScroll.ScrollBarThickness = 3
+ScriptsScroll.ScrollBarImageColor3 = Color3.fromRGB(242, 133, 0)
+ScriptsScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+ScriptsScroll.Parent = ScriptsFrame
+
+local ScriptsLayout = Instance.new("UIListLayout")
+ScriptsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+ScriptsLayout.Padding = UDim.new(0, 2)
+ScriptsLayout.Parent = ScriptsScroll
+
+local BottomFrame = Instance.new("Frame")
+BottomFrame.Name = "BottomFrame"
+BottomFrame.Size = UDim2.new(1, -20, 0, 28)
+BottomFrame.Position = UDim2.new(0, 10, 1, -34)
+BottomFrame.BackgroundTransparency = 1
+BottomFrame.Parent = Main
+
+local LoadBtn = Instance.new("TextButton")
+LoadBtn.Size = UDim2.new(0.7, -4, 1, 0)
+LoadBtn.Position = UDim2.new(0, 0, 0, 0)
+LoadBtn.BackgroundColor3 = Color3.fromRGB(30, 34, 40)
+LoadBtn.BorderSizePixel = 0
+LoadBtn.Text = "Load Script"
+LoadBtn.TextColor3 = Color3.fromRGB(242, 133, 0)
+LoadBtn.TextSize = 11
+LoadBtn.Font = Enum.Font.Code
+LoadBtn.Parent = BottomFrame
+
+local LoadBtnStroke = Instance.new("UIStroke")
+LoadBtnStroke.Color = Color3.fromRGB(242, 133, 0)
+LoadBtnStroke.Thickness = 1
+LoadBtnStroke.Parent = LoadBtn
+
+local UnloadBtn = Instance.new("TextButton")
+UnloadBtn.Size = UDim2.new(0.3, 0, 1, 0)
+UnloadBtn.Position = UDim2.new(0.7, 4, 0, 0)
+UnloadBtn.BackgroundColor3 = Color3.fromRGB(25, 20, 20)
+UnloadBtn.BorderSizePixel = 0
+UnloadBtn.Text = "Unload"
+UnloadBtn.TextColor3 = Color3.fromRGB(220, 70, 70)
+UnloadBtn.TextSize = 11
+UnloadBtn.Font = Enum.Font.Code
+UnloadBtn.Parent = BottomFrame
+
+local UnloadBtnStroke = Instance.new("UIStroke")
+UnloadBtnStroke.Color = Color3.fromRGB(150, 40, 40)
+UnloadBtnStroke.Thickness = 1
+UnloadBtnStroke.Parent = UnloadBtn
+
 local GameListURL = "https://syscall-gamelist.lovable.app/API/gamelist.lua"
 local FetchedData = {}
+local SelectedGameName = nil
+local SelectedScriptData = nil
+local LastRefresh = 0
 
-local Window = Library:Window({
-    Name = "Syscall Loader",
-    SubTitle = "v1.0",
-    TimeRemaining = 500000
-})
+local SelectedGameBtn = nil
+local SelectedScriptBtn = nil
 
-local HomePage = Window:Page({
-    Icon = "131145598162617",
-    Columns = 2
-})
+local function ClearScroll(scroll)
+    for _, child in ipairs(scroll:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+end
 
-local LoaderPage = Window:Page({
-    Icon = "131145598162617",
-    Columns = 2
-})
+local function RenderScripts(gameName)
+    ClearScroll(ScriptsScroll)
+    SelectedScriptData = nil
+    SelectedScriptBtn = nil
+    
+    if not gameName or not FetchedData[gameName] then return end
+    
+    local scripts = FetchedData[gameName]
+    for _, scriptObj in ipairs(scripts) do
+        if scriptObj.name then
+            local Btn = Instance.new("TextButton")
+            Btn.Size = UDim2.new(1, 0, 0, 22)
+            Btn.BackgroundColor3 = Color3.fromRGB(22, 25, 30)
+            Btn.BorderSizePixel = 0
+            Btn.Text = "  " .. scriptObj.name
+            Btn.TextColor3 = Color3.fromRGB(160, 165, 175)
+            Btn.TextSize = 11
+            Btn.Font = Enum.Font.Code
+            Btn.TextXAlignment = Enum.TextXAlignment.Left
+            Btn.Parent = ScriptsScroll
+            
+            Btn.MouseButton1Click:Connect(function()
+                if SelectedScriptBtn then
+                    SelectedScriptBtn.BackgroundColor3 = Color3.fromRGB(22, 25, 30)
+                    SelectedScriptBtn.TextColor3 = Color3.fromRGB(160, 165, 175)
+                end
+                SelectedScriptBtn = Btn
+                SelectedScriptData = scriptObj
+                Btn.BackgroundColor3 = Color3.fromRGB(242, 133, 0)
+                Btn.TextColor3 = Color3.fromRGB(10, 10, 10)
+            end)
+        end
+    end
+    
+    ScriptsLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        ScriptsScroll.CanvasSize = UDim2.new(0, 0, 0, ScriptsLayout.AbsoluteContentSize.Y)
+    end)
+end
 
-local InfoSection = HomePage:Section({
-    Name = "Info",
-    Icon = "131145598162617",
-    Side = 1
-})
-
-local CreditsSection = HomePage:Section({
-    Name = "Credits",
-    Icon = "131145598162617",
-    Side = 2
-})
-
-InfoSection:Label("Loader Version: 1.0")
-InfoSection:Label("Username: " .. LocalPlayer.Name)
-InfoSection:Label("Time: " .. os.date("%X"))
-
-CreditsSection:Label("Owner: VulnX")
-CreditsSection:Label("Developers: EnzukaiX (xltge, vulnx, xyra)")
-CreditsSection:Label("UI library creators: Rayfield, Wind UI, obsidian/linoria")
-
-local LeftSection = LoaderPage:Section({
-    Name = "Configuration",
-    Icon = "131145598162617",
-    Side = 1
-})
-
-local RightSection = LoaderPage:Section({
-    Name = "Execution",
-    Icon = "131145598162617",
-    Side = 2
-})
-
-local GameDropdown = nil
-local ScriptDropdown = nil
-local CurrentScripts = {}
-
-local function RebuildGameDropdown(ItemsList)
-    ItemsList = ItemsList or {}
-    if GameDropdown then
-        GameDropdown:Refresh(ItemsList)
-    else
-        GameDropdown = LeftSection:Dropdown({
-            Name = "Select Game",
-            Flag = "SelectedGame",
-            Items = ItemsList,
-            Default = ItemsList[1] or "",
-            MaxSize = 145,
-            Callback = function(Value)
-                RebuildScriptDropdown({})
+local function RenderGames()
+    ClearScroll(GamesScroll)
+    
+    local gameNames = {}
+    for name in pairs(FetchedData) do
+        table.insert(gameNames, name)
+    end
+    table.sort(gameNames)
+    
+    for _, name in ipairs(gameNames) do
+        local Btn = Instance.new("TextButton")
+        Btn.Size = UDim2.new(1, 0, 0, 22)
+        Btn.BackgroundColor3 = Color3.fromRGB(22, 25, 30)
+        Btn.BorderSizePixel = 0
+        Btn.Text = "  " .. name
+        Btn.TextColor3 = Color3.fromRGB(160, 165, 175)
+        Btn.TextSize = 11
+        Btn.Font = Enum.Font.Code
+        Btn.TextXAlignment = Enum.TextXAlignment.Left
+        Btn.Parent = GamesScroll
+        
+        if SelectedGameName == name then
+            SelectedGameBtn = Btn
+            Btn.BackgroundColor3 = Color3.fromRGB(242, 133, 0)
+            Btn.TextColor3 = Color3.fromRGB(10, 10, 10)
+        end
+        
+        Btn.MouseButton1Click:Connect(function()
+            if SelectedGameBtn then
+                SelectedGameBtn.BackgroundColor3 = Color3.fromRGB(22, 25, 30)
+                SelectedGameBtn.TextColor3 = Color3.fromRGB(160, 165, 175)
             end
-        })
+            SelectedGameBtn = Btn
+            SelectedGameName = name
+            Btn.BackgroundColor3 = Color3.fromRGB(242, 133, 0)
+            Btn.TextColor3 = Color3.fromRGB(10, 10, 10)
+            
+            RenderScripts(name)
+        end)
     end
+    
+    GamesLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        GamesScroll.CanvasSize = UDim2.new(0, 0, 0, GamesLayout.AbsoluteContentSize.Y)
+    end)
 end
 
-local function RebuildScriptDropdown(ItemsList)
-    ItemsList = ItemsList or {}
-    if ScriptDropdown then
-        ScriptDropdown:Refresh(ItemsList)
-    else
-        ScriptDropdown = RightSection:Dropdown({
-            Name = "Select Script",
-            Flag = "SelectedScript",
-            Items = ItemsList,
-            Default = ItemsList[1] or "",
-            MaxSize = 145,
-            Callback = function(Value) end
-        })
-    end
-end
-
-local function FetchGames()
-    local Success, Result = pcall(function()
+local function FetchData()
+    local success, result = pcall(function()
         return loadstring(game:HttpGet(GameListURL))()
     end)
     
-    if Success and type(Result) == "table" then
-        FetchedData = Result
-        local GameNames = {}
-        for GameName, _ in pairs(FetchedData) do
-            table.insert(GameNames, GameName)
+    if success and type(result) == "table" then
+        FetchedData = result
+        RenderGames()
+        if SelectedGameName then
+            RenderScripts(SelectedGameName)
         end
-        table.sort(GameNames)
-        
-        RebuildGameDropdown(GameNames)
-        Library:Notification("Games fetched successfully.", "90449909165261", 3)
-    else
-        Library:Notification("Failed to fetch games.", "90449909165261", 5)
     end
 end
 
-LeftSection:Button({
-    Name = "Refresh Games",
-    Callback = function()
-        FetchGames()
-    end
-})
-
-LeftSection:Button({
-    Name = "Fetch Scripts for selected",
-    Callback = function()
-        local SelectedGame = Library.Flags["SelectedGame"]
-        if SelectedGame and FetchedData[SelectedGame] then
-            CurrentScripts = FetchedData[SelectedGame]
-            local ScriptNames = {}
-            for _, ScriptData in ipairs(CurrentScripts) do
-                if ScriptData.name then
-                    table.insert(ScriptNames, ScriptData.name)
-                end
-            end
-            table.sort(ScriptNames)
-            
-            RebuildScriptDropdown(ScriptNames)
-            Library:Notification("Scripts fetched for " .. SelectedGame .. ".", "90449909165261", 3)
-        else
-            Library:Notification("No scripts found for this game.", "90449909165261", 3)
-        end
-    end
-})
-
-RightSection:Button({
-    Name = "Load Script",
-    Callback = function()
-        local SelectedGame = Library.Flags["SelectedGame"]
-        local SelectedScriptName = Library.Flags["SelectedScript"]
+LoadBtn.MouseButton1Click:Connect(function()
+    if SelectedScriptData and SelectedScriptData.url then
+        LoadBtn.Text = "Executing..."
+        local success, err = pcall(function()
+            loadstring(game:HttpGet(SelectedScriptData.url))()
+        end)
         
-        if SelectedGame and SelectedScriptName and CurrentScripts then
-            for _, ScriptData in ipairs(CurrentScripts) do
-                if ScriptData.name == SelectedScriptName and ScriptData.url then
-                    local Success, ErrorMessage = pcall(function()
-                        loadstring(game:HttpGet(ScriptData.url))()
-                    end)
-                    
-                    if Success then
-                        Library:Notification("Script loaded successfully.", "90449909165261", 3)
-                    else
-                        Library:Notification("Execution error: " .. tostring(ErrorMessage), "90449909165261", 5)
-                    end
-                    return
-                end
-            end
+        if success then
+            LoadBtn.Text = "Success"
+        else
+            LoadBtn.Text = "Error"
+            warn("Syscall Loader Execution Error:", err)
         end
-        Library:Notification("Please select a valid game and script.", "90449909165261", 3)
+        
+        task.delay(2, function()
+            LoadBtn.Text = "Load Script"
+        end)
+    else
+        LoadBtn.Text = "Select Script"
+        task.delay(1.5, function()
+            LoadBtn.Text = "Load Script"
+        end)
     end
-})
+end)
 
-RightSection:Button({
-    Name = "Unload Loader",
-    Callback = function()
-        Library:Unload()
+UnloadBtn.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+FetchData()
+
+RunService.Heartbeat:Connect(function()
+    if tick() - LastRefresh >= 2 then
+        LastRefresh = tick()
+        FetchData()
     end
-})
-
-RebuildGameDropdown({})
-RebuildScriptDropdown({})
-FetchGames()
+end)
