@@ -31,6 +31,31 @@ for _, child in ipairs(CoreGui:GetChildren()) do
     end
 end
 
+local Junkie = loadstring(game:HttpGet("https://jnkie.com/sdk/library.lua"))()
+Junkie.service = "New"
+Junkie.identifier = "6881"
+Junkie.provider = "Syscall"
+
+local KEY_FILE = "syscall_key.txt"
+
+local function saveKey(key)
+    if writefile then
+        pcall(function()
+            writefile(KEY_FILE, key)
+        end)
+    end
+end
+
+local function loadSavedKey()
+    if isfile and readfile and isfile(KEY_FILE) then
+        local ok, data = pcall(readfile, KEY_FILE)
+        if ok and data and #data > 0 then
+            return data
+        end
+    end
+    return nil
+end
+
 local function GenerateRandomId()
     local id = ""
     for i = 1, 10 do
@@ -256,6 +281,120 @@ UnloadBtnStroke.Color = Color3.fromRGB(150, 40, 40)
 UnloadBtnStroke.Thickness = 1
 UnloadBtnStroke.Parent = UnloadBtn
 
+local KeyFrame = Instance.new("Frame")
+KeyFrame.Name = "KeyFrame"
+KeyFrame.Size = UDim2.new(0, 460, 0, 310)
+KeyFrame.Position = UDim2.new(0.5, -230, 0.5, -155)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(20, 22, 25)
+KeyFrame.BorderSizePixel = 0
+KeyFrame.ClipsDescendants = true
+KeyFrame.Active = true
+KeyFrame.Draggable = true
+KeyFrame.Parent = ScreenGui
+
+local KeyOuterBorder = Instance.new("UIStroke")
+KeyOuterBorder.Color = Color3.fromRGB(50, 55, 65)
+KeyOuterBorder.Thickness = 1.5
+KeyOuterBorder.Parent = KeyFrame
+
+local KeyAccentBar = Instance.new("Frame")
+KeyAccentBar.Size = UDim2.new(1, 0, 0, 2)
+KeyAccentBar.BackgroundColor3 = Color3.fromRGB(242, 133, 0)
+KeyAccentBar.BorderSizePixel = 0
+KeyAccentBar.Parent = KeyFrame
+
+local KeyTitleBar = Instance.new("Frame")
+KeyTitleBar.Size = UDim2.new(1, 0, 0, 28)
+KeyTitleBar.Position = UDim2.new(0, 0, 0, 2)
+KeyTitleBar.BackgroundColor3 = Color3.fromRGB(15, 17, 20)
+KeyTitleBar.BorderSizePixel = 0
+KeyTitleBar.Parent = KeyFrame
+
+local KeyTitleLabel = Instance.new("TextLabel")
+KeyTitleLabel.Size = UDim2.new(1, -12, 1, 0)
+KeyTitleLabel.Position = UDim2.new(0, 10, 0, 0)
+KeyTitleLabel.BackgroundTransparency = 1
+KeyTitleLabel.Text = "Syscall Loader - Key System"
+KeyTitleLabel.TextColor3 = Color3.fromRGB(200, 205, 215)
+KeyTitleLabel.TextSize = 12
+KeyTitleLabel.Font = Enum.Font.Code
+KeyTitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+KeyTitleLabel.Parent = KeyTitleBar
+
+local KeyBox = Instance.new("TextBox")
+KeyBox.Size = UDim2.new(1, -40, 0, 32)
+KeyBox.Position = UDim2.new(0, 20, 0, 60)
+KeyBox.BackgroundColor3 = Color3.fromRGB(15, 16, 19)
+KeyBox.BorderSizePixel = 0
+KeyBox.Text = ""
+KeyBox.PlaceholderText = "Enter your key..."
+KeyBox.TextColor3 = Color3.fromRGB(200, 205, 215)
+KeyBox.PlaceholderColor3 = Color3.fromRGB(100, 105, 115)
+KeyBox.TextSize = 12
+KeyBox.Font = Enum.Font.Code
+KeyBox.ClearTextOnFocus = false
+KeyBox.Parent = KeyFrame
+
+local KeyBoxStroke = Instance.new("UIStroke")
+KeyBoxStroke.Color = Color3.fromRGB(35, 38, 45)
+KeyBoxStroke.Thickness = 1
+KeyBoxStroke.Parent = KeyBox
+
+local KeyBoxCorner = Instance.new("UICorner")
+KeyBoxCorner.CornerRadius = UDim.new(0, 4)
+KeyBoxCorner.Parent = KeyBox
+
+local GetKeyBtn = Instance.new("TextButton")
+GetKeyBtn.Size = UDim2.new(0.5, -25, 0, 32)
+GetKeyBtn.Position = UDim2.new(0, 20, 0, 110)
+GetKeyBtn.BackgroundColor3 = Color3.fromRGB(30, 34, 40)
+GetKeyBtn.BorderSizePixel = 0
+GetKeyBtn.Text = "Get Key"
+GetKeyBtn.TextColor3 = Color3.fromRGB(242, 133, 0)
+GetKeyBtn.TextSize = 12
+GetKeyBtn.Font = Enum.Font.Code
+GetKeyBtn.Parent = KeyFrame
+
+local GetKeyStroke = Instance.new("UIStroke")
+GetKeyStroke.Color = Color3.fromRGB(242, 133, 0)
+GetKeyStroke.Thickness = 1
+GetKeyStroke.Parent = GetKeyBtn
+
+local GetKeyCorner = Instance.new("UICorner")
+GetKeyCorner.CornerRadius = UDim.new(0, 4)
+GetKeyCorner.Parent = GetKeyBtn
+
+local CheckKeyBtn = Instance.new("TextButton")
+CheckKeyBtn.Size = UDim2.new(0.5, -25, 0, 32)
+CheckKeyBtn.Position = UDim2.new(0.5, 5, 0, 110)
+CheckKeyBtn.BackgroundColor3 = Color3.fromRGB(30, 34, 40)
+CheckKeyBtn.BorderSizePixel = 0
+CheckKeyBtn.Text = "Check Key"
+CheckKeyBtn.TextColor3 = Color3.fromRGB(242, 133, 0)
+CheckKeyBtn.TextSize = 12
+CheckKeyBtn.Font = Enum.Font.Code
+CheckKeyBtn.Parent = KeyFrame
+
+local CheckKeyStroke = Instance.new("UIStroke")
+CheckKeyStroke.Color = Color3.fromRGB(242, 133, 0)
+CheckKeyStroke.Thickness = 1
+CheckKeyStroke.Parent = CheckKeyBtn
+
+local CheckKeyCorner = Instance.new("UICorner")
+CheckKeyCorner.CornerRadius = UDim.new(0, 4)
+CheckKeyCorner.Parent = CheckKeyBtn
+
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(1, -40, 0, 40)
+StatusLabel.Position = UDim2.new(0, 20, 0, 160)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = ""
+StatusLabel.TextColor3 = Color3.fromRGB(160, 165, 175)
+StatusLabel.TextSize = 11
+StatusLabel.Font = Enum.Font.Code
+StatusLabel.TextWrapped = true
+StatusLabel.Parent = KeyFrame
+
 local GameListURL = "https://syscall-gamelist.lovable.app/API/gamelist.lua"
 local FetchedData = {}
 local SelectedGameName = nil
@@ -372,6 +511,74 @@ local function FetchData()
     end
 end
 
+local function showMain()
+    KeyFrame.Visible = false
+    Main.Visible = true
+    ToggleIcon.Visible = true
+    FetchData()
+    RunService.Heartbeat:Connect(function()
+        if tick() - LastRefresh >= 2 then
+            LastRefresh = tick()
+            FetchData()
+        end
+    end)
+end
+
+local function validateAndProceed(key)
+    if not key or #key == 0 then
+        StatusLabel.Text = "Please enter a key"
+        StatusLabel.TextColor3 = Color3.fromRGB(220, 70, 70)
+        return
+    end
+    StatusLabel.Text = "Validating..."
+    StatusLabel.TextColor3 = Color3.fromRGB(242, 133, 0)
+    CheckKeyBtn.Text = "Checking..."
+    local validation = Junkie.check_key(key)
+    if validation and validation.valid then
+        saveKey(key)
+        getgenv().SCRIPT_KEY = key
+        StatusLabel.Text = "Key valid"
+        StatusLabel.TextColor3 = Color3.fromRGB(80, 200, 80)
+        CheckKeyBtn.Text = "Check Key"
+        task.wait(0.6)
+        showMain()
+    else
+        local err = (validation and (validation.error or validation.message)) or "Invalid key"
+        StatusLabel.Text = tostring(err)
+        StatusLabel.TextColor3 = Color3.fromRGB(220, 70, 70)
+        CheckKeyBtn.Text = "Check Key"
+    end
+end
+
+GetKeyBtn.MouseButton1Click:Connect(function()
+    StatusLabel.Text = "Getting link..."
+    StatusLabel.TextColor3 = Color3.fromRGB(242, 133, 0)
+    local link, err = Junkie.get_key_link()
+    if link then
+        if setclipboard then
+            setclipboard(link)
+            StatusLabel.Text = "Key link copied to clipboard"
+            StatusLabel.TextColor3 = Color3.fromRGB(80, 200, 80)
+        else
+            StatusLabel.Text = link
+            StatusLabel.TextColor3 = Color3.fromRGB(80, 200, 80)
+        end
+    else
+        StatusLabel.Text = err or "Rate limited. Wait 5 minutes"
+        StatusLabel.TextColor3 = Color3.fromRGB(220, 70, 70)
+    end
+end)
+
+CheckKeyBtn.MouseButton1Click:Connect(function()
+    validateAndProceed(KeyBox.Text:gsub("%s+", ""))
+end)
+
+KeyBox.FocusLost:Connect(function(enter)
+    if enter then
+        validateAndProceed(KeyBox.Text:gsub("%s+", ""))
+    end
+end)
+
 LoadBtn.MouseButton1Click:Connect(function()
     if SelectedScriptData and SelectedScriptData.url then
         LoadBtn.Text = "Executing..."
@@ -399,13 +606,4 @@ end)
 
 UnloadBtn.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
-end)
-
-FetchData()
-
-RunService.Heartbeat:Connect(function()
-    if tick() - LastRefresh >= 2 then
-        LastRefresh = tick()
-        FetchData()
-    end
-end)
+  end
